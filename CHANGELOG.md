@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# v1.0.3
+
+### Improved
+* Update notifications are now also posted to the configured update channel when running `?update`.
+* The update message now notes that the bot restarts automatically.
+
 # v1.0.2
 
 ### Fixed

@@ -2156,9 +2156,13 @@ class Utility(commands.Cog):
 
                     if self.bot.hosting_method == HostingMethod.OTHER:
                         embed.description = (
-                            "If you do not have an auto-restart setup, please manually start the bot.",
+                            "The bot is restarting automatically. "
+                            "If it does not come back online, please start it manually."
                         )
 
+                    update_channel = self.bot.update_channel
+                    if update_channel is not None and update_channel.id != ctx.channel.id:
+                        await update_channel.send(embed=embed)
                     await ctx.send(embed=embed)
                     return await self.bot.close()
                 else:
