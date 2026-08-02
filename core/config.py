@@ -408,11 +408,15 @@ class ConfigManager:
         elif key in self.enums:
             if value is None:
                 return None
+            enum_cls = self.enums[key]
             try:
-                value = self.enums[key](value)
+                value = enum_cls(value)
             except ValueError:
-                logger.warning("Invalid %s %s.", key, value)
-                value = self.remove(key)
+                try:
+                    value = enum_cls[value]
+                except (KeyError, TypeError):
+                    logger.warning("Invalid %s %s.", key, value)
+                    value = self.remove(key)
 
         elif key in self.duration_seconds:
             if not isinstance(value, int):
