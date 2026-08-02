@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Deploy Supportly on a VPS. Step by step, no magic." />
+    <title>Deploy on a VPS &middot; Supportly</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        background: radial-gradient(1200px 500px at 50% -120px, #191a1e 0%, #0f1013 60%, #0f1013 100%);
+        color: #e6e8ec;
+        line-height: 1.65;
+      }
+      header { padding: 3rem 1.5rem; text-align: center; }
+      h1 {
+        font-size: 2.3rem; margin: 0; letter-spacing: -.01em;
+        background: linear-gradient(90deg, #fff, #a9adb7 40%, #5865f2 70%, #7289ef);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .tagline { color: #9fb0d9; margin: .5rem 0 1.2rem; }
+      .wrap { max-width: 880px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+      .card {
+        background: #191a1e; border: 1px solid #232529; border-left: 3px solid #5865f2;
+        border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1.1rem 0;
+      }
+      .card h2 { margin: 0 0 .45rem; font-size: 1.05rem; color: #fff; }
+      code, pre { font-family: "Fira Code", ui-monospace, "SFMono-Regular", monospace; }
+      code { background: #141518; padding: .12rem .4rem; border-radius: 4px; color: #f4a89d; font-size: .9em; }
+      pre {
+        background: #0f1114; border: 1px solid #232529; border-radius: 8px;
+        padding: .9rem 1rem; overflow:auto; font-size: .86rem; line-height: 1.55;
+      }
+      pre code { background: none; padding: 0; color: #cdd6f4; }
+      .step { display: flex; gap: .8rem; align-items: flex-start; margin: .55rem 0; }
+      .step-num {
+        font-size: .8rem; font-weight: 700;
+        background: #232529; border: 1px solid #383a40; color: #7289ef;
+        padding: .12rem .5rem; border-radius: 5px; min-width: 1.7rem; text-align: center;
+      }
+      .mut { color: #7a7f8a; font-size: .85rem; }
+      a { color: #7289ef; }
+      a.btn {
+        display: inline-block; padding: .55rem .95rem; border-radius: 6px;
+        text-decoration: none; font-weight: 620; border: 1px solid transparent;
+        background: #5865f2; color: #fff; box-shadow: 0 6px 16px #5865f233;
+      }
+      footer { text-align: center; padding: 2rem; color: #7a7f8a; font-size: .82rem; border-top: 1px solid #232529; }
+      .warn { border-left-color: #f59e0b; }
+      .warn h2 { color: #fbbf24; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Run Supportly on a VPS</h1>
+      <p class="tagline">GitHub Pages hosts these docs only. The bot runs on a real host with a Python process + MongoDB.</p>
+    </header>
+
+    <div class="wrap">
+      <div class="card warn">
+        <h2>Important: this page is documentation</h2>
+        <p>
+          GitHub Pages is <strong>static hosting</strong>. It serves files only — it cannot run the
+          bot, hold your Discord token, or host MongoDB. To keep Supportly online 24/7, run it on a
+          host that supports long-running processes (a VPS, or Railway / Fly.io / Render, or your Windows VM).
+        </p>
+        <p class="mut">No secrets are stored in this repo. Your token stays in the host environment only.</p>
+      </div>
+
+      <div class="card">
+        <h2>1. Get a VPS</h2>
+        <div class="step"><span class="step-num">1</span><span>Pick a Linux VPS (Ubuntu 22.04 is a safe default). 2 vCPU / 4 GB RAM is plenty for a support bot.</span></div>
+        <div class="step"><span class="step-num">2</span><span>Note the server IP and root (or sudo) SSH access. Point a domain/CNAME at it if you want (e.g. <code>bot.yourdomain.com</code>).</span></div>
+      </div>
+
+      <div class="card">
+        <h2>2. Install dependencies</h2>
+        <div class="step"><span class="step-num">3</span><span>Log in, then install Python 3.11 + MongoDB (use the official MongoDB apt repo) and <code>git</code>:</span></div>
+<pre><code>curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -   # (optional: node for the launcher)
+sudo apt-get update &amp;&amp; sudo apt-get install -y git curl gnupg
+# MongoDB official key + repo
+curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.gpg | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
+echo "deb [signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg] http://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" \
+  | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+sudo apt-get update &amp;&amp; sudo apt-get install -y mongodb-org
+
+# Python 3.11
+sudo apt-get install -y software-properties-common
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo apt-get update &amp;&amp; sudo apt-get install -y python3.11 python3.11-venv python3.11-distutils</code></pre>
+      </div>
+
+      <div class="card">
+        <h2>3. Clone + configure (keep secrets out of git)</h2>
+        <div class="step"><span class="step-num">4</span><span>Clone and create a virtualenv:</span></div>
+<pre><code>git clone https://github.com/justsadnyx-ux/supportly.git
+cd supportly
+python3.11 -m venv .venv
+.venv/bin/pip install -U pip install -r requirements.txt</code></pre>
+        <div class="step"><span class="step-num">5</span><span>Start MongoDB and create <code>.env</code> with your token in the <em>host environment only</em> (never commit it):</span></div>
+<pre><code>sudo mkdir -p /data/db /var/log/mongodb
+sudo mongod --fork --logpath /var/log/mongodb/mongod.log --dbpath /data/db --bind_ip 127.0.0.1
+
+cat &gt; .env &lt;&lt;'ENV'
+TOKEN=YOUR_DISCORD_BOT_TOKEN_HERE
+GUILD_ID=1523251076915265606
+SUPPORT_GUILD_ID=1523251076915265606
+CONNECTION_URI=mongodb://localhost:27017
+UPDATE_CHANNEL_ID=1533409707409018992
+STATUS=online
+ACTIVITY_TYPE=custom
+ACTIVITY_MESSAGE=DM - FOR SUPPORT
+DISABLE_AUTOUPDATES=true
+ENV
+# Restrict file perms:
+chmod 600 .env</code></pre>
+        <p class="mut">Tip: on real hosts, prefer injecting `TOKEN`/`CONNECTION_URI` via the host's secret store instead of a file.</p>
+      </div>
+
+      <div class="card">
+        <h2>4. Keep it alive (replace the local restart loop)</h2>
+        <p>On Windows you used <code>start_supportly.py</code>. On Linux use a process manager so the bot restarts if it crashes.</p>
+<pre><code>.venv/bin/pip install pm2   # optional
+.venv/bin/python bot.py     # (or wrap it in a systemd unit / supervisor)</code></pre>
+        <p class="mut">
+          Example systemd unit: set <code>ExecStart=/path/supportly/.venv/bin/python /path/supportly/bot.py</code>,
+          <code>Restart=always</code>, environment <code>PYTHONUNBUFFERED=1</code>.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>5. Verify</h2>
+        <ul>
+          <li>Bot status on Discord shows <code>DM - FOR SUPPORT</code>.</li>
+          <li><code>?</code> prefix works in <strong>Froggy</strong>.</li>
+          <li><code>?changelog</code> loads from
+            <a href="https://justsadnyx-ux.github.io/supportly/changelog.md">the Pages changelog</a>.</li>
+          <li><code>?update</code> reports current vs latest and posts the changelog to <code>#our-bot-updates</code>.</li>
+        </ul>
+      </div>
+
+      <p class="mut">
+        This is a community-hosted, independent fork of Modmail (<code>justsadnyx-ux/supportly</code>),
+        licensed AGPL v3.0. See <a href="https://github.com/justsadnyx-ux/supportly">GitHub</a> &bull;
+        <a href="https://discord.gg/25YRFavwpj">support server</a>.
+      </p>
+    </div>
+
+    <footer>
+      <p>Docs hosted on GitHub Pages from <code>/docs</code>. &middot; Supportly</p>
+    </footer>
+  </body>
+</html>
