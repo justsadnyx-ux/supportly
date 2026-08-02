@@ -11,6 +11,9 @@ config.json
 # Data
 temp/
 bot_console.log
+loop_console.log
+loop_console.err
+start_supportly.py
 
 ### Python
 # Byte-compiled / optimized / DLL files
