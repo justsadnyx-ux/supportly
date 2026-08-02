@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Supportly changelog — release notes posted to #our-bot-updates." />
+    <title>Changelog &middot; Supportly</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <p><span class="pill">Docs</span></p>
+      <h1>Changelog</h1>
+      <p class="tagline">Release notes for Supportly. The latest release is also posted to <code>#our-bot-updates</code> on the support server.</p>
+    </header>
+
+    <nav class="docs">
+      <a href="index.html">Home</a>
+      <a href="vps.html">VPS guide</a>
+      <a href="changelog.html" style="color:#fff;text-decoration:underline;">Changelog</a>
+      <a href="changelog.md">Raw .md</a>
+    </nav>
+
+    <div class="wrap">
+
+      <div class="card" id="latest-card">
+        <h2>Latest release</h2>
+        <p class="mut">Fetching from the public GitHub Releases API&hellip;</p>
+      </div>
+
+      <div class="card">
+        <h2>Older releases</h2>
+        <p class="mut">Below are rendered from <code>CHANGELOG.md</code>. Newest first.</p>
+      </div>
+
+      <!-- v1.0.8 -->
+      <details open>
+        <summary><span class="pill">v1.0.8</span> &middot; ?update read-only + Pages polish</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Changed</h3>
+          <ul style="margin:.25rem 0;">
+            <li>`?update` is now a read-only update *check*: it reports the current vs. latest version and posts the full latest changelog to <code>#our-bot-updates</code>, but no longer pulls or restarts the bot.</li>
+            <li>GitHub Pages site (<code>docs/index.html</code>) refreshed with a hand-written design; docs still hosted on Pages (not the bot — the bot runs locally and reads its token from <code>.env</code>).</li>
+          </ul>
+          <h3 style="font-size:.95rem;color:#fff;">Added</h3>
+          <ul style="margin:.25rem 0;">
+            <li><code>#our-bot-updates</code> (1533409707409018992) receives the full latest changelog embed on each <code>?update</code> check.</li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- v1.0.7 -->
+      <details>
+        <summary><span class="pill">v1.0.7</span> &middot; changelog pipeline test release</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Changed</h3>
+          <ul style="margin:.25rem 0;"><li>Test release for the update-notification + GitHub Pages changelog pipeline.</li></ul>
+        </div>
+      </details>
+
+      <!-- v1.0.6 -->
+      <details>
+        <summary><span class="pill">v1.0.6</span> &middot; ?about links</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Added</h3>
+          <ul style="margin:.25rem 0;"><li><code>?about</code> now links to the support server, GitHub repo, and GitHub Pages site.</li></ul>
+        </div>
+      </details>
+
+      <!-- v1.0.5 -->
+      <details>
+        <summary><span class="pill">v1.0.5</span> &middot; Pages-hosted changelog</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Changed</h3>
+          <ul style="margin:.25rem 0;"><li>Changelog is served from the GitHub Pages site (https://justsadnyx-ux.github.io/supportly/).</li></ul>
+        </div>
+      </details>
+
+      <!-- v1.0.4 -->
+      <details>
+        <summary><span class="pill">v1.0.4</span> &middot; channel notifications + Pages source</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Changed</h3>
+          <ul style="margin:.25rem 0;">
+            <li>Changelogs are no longer DM'd. The latest changelog is posted to the configured update channel (<code>#our-bot-updates</code>) on every release.</li>
+            <li>Changelog source now points to the GitHub Pages site (<code>justsadnyx-ux.github.io/supportly</code>); only the latest version is published.</li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- v1.0.3 -->
+      <details>
+        <summary><span class="pill">v1.0.3</span> &middot; update channel + restart note</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Improved</h3>
+          <ul style="margin:.25rem 0;">
+            <li>Update notifications are now also posted to the configured update channel when running <code>?update</code>.</li>
+            <li>The update message now notes that the bot restarts automatically.</li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- v1.0.2 -->
+      <details>
+        <summary><span class="pill">v1.0.2</span> &middot; pipeline test</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Fixed</h3>
+          <ul style="margin:.25rem 0;"><li>Test release to verify the auto-update and changelog DM pipeline.</li></ul>
+        </div>
+      </details>
+
+      <!-- v1.0.1 -->
+      <details>
+        <summary><span class="pill">v1.0.1</span> &middot; instant replies + DMed changelogs</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Changed</h3>
+          <ul style="margin:.25rem 0;">
+            <li>Removed typing indicators for instant replies.</li>
+            <li>Changelogs are now DMed to the owner(s) and all server members whenever a new release is detected.</li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- v1.0.0 -->
+      <details>
+        <summary><span class="pill">v1.0.0</span> &middot; initial Supportly release</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Added</h3>
+          <ul style="margin:.25rem 0;">
+            <li><strong>Supportly</strong> — an independent Discord support bot, fully rebranded from its upstream origins.</li>
+            <li>Premium gating: premium features require membership in the support server with the <code>Premium</code> role.</li>
+            <li>Support server invitation: <a href="https://discord.gg/25YRFavwpj">https://discord.gg/25YRFavwpj</a>.</li>
+            <li>Custom status: <code>DM - FOR SUPPORT</code>.</li>
+          </ul>
+          <h3 style="font-size:.95rem;color:#fff;">Changed</h3>
+          <ul style="margin:.25rem 0;">
+            <li>Version reset to <code>v1.0.0</code>.</li>
+            <li>Plugin registry and changelog sources now point to the Supportly repository (<code>justsadnyx-ux/supportly</code>).</li>
+            <li>Removed all third-party social media links and branding.</li>
+          </ul>
+        </div>
+      </details>
+
+      <div class="card">
+        <h2>Older history</h2>
+        <p class="mut">The full raw changelog is also available at <a href="https://github.com/justsadnyx-ux/supportly/blob/master/CHANGELOG.md"><code>CHANGELOG.md</code></a> on GitHub.</p>
+      </div>
+
+    </div>
+
+    <footer>
+      <p>Supportly is open source under the AGPL v3.0. &middot; Made with 💜 in froggy land.</p>
+      <p class="mut">Docs hosted on GitHub Pages from <code>/docs</code>.</p>
+    </footer>
+
+    <script>
+      // Latest release from the PUBLIC GitHub API (no token, unauthenticated rate limits apply).
+      (function () {
+        var card = document.getElementById("latest-card");
+        if (!card) return;
+        fetch("https://api.github.com/repos/justsadnyx-ux/supportly/releases/latest")
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+          .then(function (json) {
+            var tag = json.tag_name || "unknown";
+            var name = json.name || tag;
+            var html = json.html_url || "https://github.com/justsadnyx-ux/supportly/releases";
+            var body = (json.body || "").trim();
+            card.innerHTML =
+              '<h2>Latest release</h2>' +
+              '<p class="mut"><span class="pill">' + tag + '</span> <strong>' + name + '</strong></p>' +
+              '<p><a class="btn" href="' + html + '">View on GitHub &rarr;</a></p>' +
+              (body ? '<details><summary>Release notes</summary><pre style="white-space:pre-wrap;">' + body.replace(/&/g,"&amp;").replace(/</g,"&lt;") + '</pre></details>' : '');
+          })
+          .catch(function () {
+            card.innerHTML = '<h2>Latest release</h2><p class="mut">Could not fetch from the GitHub API right now (unauthenticated rate limit). See <a href="https://github.com/justsadnyx-ux/supportly/releases">releases on GitHub</a>.</p>';
+          });
+      })();
+    </script>
+  </body>
+</html>

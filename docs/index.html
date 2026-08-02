@@ -5,90 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Supportly — a Discord support bot for communities. DM a message to open a thread with staff." />
     <title>Supportly</title>
-    <style>
-      :root { color-scheme: dark; }
-      body {
-        margin: 0;
-        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-        background: radial-gradient(1200px 500px at 50% -120px, #191a1e 0%, #0f1013 60%, #0f1013 100%);
-        color: #e6e8ec;
-        line-height: 1.6;
-      }
-      header { padding: 3.5rem 1.5rem; text-align: center; }
-      h1 {
-        font-size: 2.5rem;
-        margin: 0;
-        letter-spacing: -0.015em;
-        background: linear-gradient(90deg, #fff, #a9adb7 40%, #5865f2 70%, #7289ef);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-      }
-      .tagline { color: #9fb0d9; margin: .6rem 0 0; font-size: 1.05rem; }
-      .dot { color: #57f287; margin-right: .3rem; }
-      .container { max-width: 820px; margin: 1.5rem auto; padding: 0 1.5rem; }
-      .card {
-        background: #191a1e;
-        border: 1px solid #232529;
-        border-left: 3px solid #5865f2;
-        border-radius: 10px;
-        padding: 1.25rem 1.4rem;
-        margin: 1.1rem 0;
-      }
-      .card h2 { margin-top: 0; font-size: 1.15rem; color: #fff; }
-      .step { display: flex; gap: .8rem; align-items: flex-start; margin: .6rem 0; }
-      .step-num {
-        font-family: "Fira Code", ui-monospace, monospace;
-        background: #232529;
-        border: 1px solid #383a40;
-        color: #7289ef;
-        padding: .15rem .5rem;
-        border-radius: 5px;
-        font-size: .85rem;
-      }
-      .buttons { display: flex; gap: .75rem; flex-wrap: wrap; }
-      a.btn {
-        display: inline-flex; align-items: center; gap: .4rem;
-        padding: .6rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600;
-        border: 1px solid transparent; transition: transform .08s ease, box-shadow .15s ease;
-      }
-      a.btn:hover { transform: translateY(-1px); }
-      a.primary { background: #5865f2; color: #fff; box-shadow: 0 6px 16px #5865f233; }
-      a.secondary { background: #232529; color: #e6e8ec; border-color: #383a40; }
-      code { background: #141518; padding: .1rem .35rem; border-radius: 4px; color: #f4a89d; font-size: .92em; }
-      .meta { color: #7a7f8a; font-size: .82rem; }
-      footer {
-        text-align: center; padding: 2rem; color: #7a7f8a; font-size: .82rem;
-        border-top: 1px solid #232529;
-      }
-      .badge {
-        display: inline-block; padding: .12rem .5rem; border-radius: 999px;
-        background: #232529; border: 1px solid #383a40; color: #57f287; font-size: .72rem;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Optional: set data-health-url to your bot's public /health endpoint to show a live status badge. Leave empty to hide. -->
+    <meta name="supportly-health-url" content="" />
   </head>
   <body>
     <header>
+      <p><span class="pill">Docs</span></p>
       <h1>Supportly</h1>
       <p class="tagline">
-        <span class="dot">●</span> Discord support bot
+        <span style="color:#57f287;margin-right:.3rem;">●</span> Discord support bot
         · prefix <code>?</code>
         · <span title="Presence shown on Discord">status: <code>DM - FOR SUPPORT</code></span>
       </p>
     </header>
 
-    <div class="container">
-      <div class="card">
+    <nav class="docs">
+      <a href="index.html">Home</a>
+      <a href="vps.html">VPS guide</a>
+      <a href="changelog.html">Changelog</a>
+    </nav>
+
+    <div class="wrap">
+
+      <div class="card" id="about">
         <h2>About</h2>
         <p>
           Supportly turns DMs into organized staff threads. Members message one place; staff
           answer in a private Discord thread that stays attached to their message history.
           Built for communities that want support without the channel noise.
         </p>
-        <p class="meta">
-          <span class="badge">open source</span>
-          <span style="margin-left: .5rem;">v1.0.8</span>
+        <p class="mut"><span class="pill">open source</span> <span style="margin-left:.5rem;">v1.0.8</span></p>
+      </div>
+
+      <div class="card">
+        <h2>Bot status</h2>
+        <p class="mut">
+          This site is static and cannot show live presence. If the bot owner wants a live online/offline
+          badge here, point a public health endpoint at the bot (e.g.
+          <code>GET https://bot.example.com/health</code> returning <code>{"ok":true}</code>) and set it as
+          the <code>supportly-health-url</code> meta content in <code>index.html</code>. No secrets are stored client-side.
         </p>
+        <p id="status-fallback"><span class="status-dot status-unknown"></span><span class="mut">status badge disabled (no health URL configured)</span></p>
       </div>
 
       <div class="card">
@@ -99,7 +57,7 @@
         </div>
         <div class="step">
           <span class="step-num">2</span>
-          <span>A private <em>thread</em> is created in <#1523251076915265606> for your staff.</span>
+          <span>A private <em>thread</em> is created in <code>#support</code> for your staff.</span>
         </div>
         <div class="step">
           <span class="step-num">3</span>
@@ -111,8 +69,8 @@
         <h2>Get support</h2>
         <p>DM <code>Supportly</code> — it is always listening. Your first message opens a thread.</p>
         <div class="buttons">
-          <a class="btn primary" href="https://github.com/justsadnyx-ux/supportly">View on GitHub &rarr;</a>
-          <a class="btn secondary" href="https://discord.gg/25YRFavwpj">Join support server</a>
+          <a class="btn" href="https://github.com/justsadnyx-ux/supportly">View on GitHub &rarr;</a>
+          <a class="btn outline" href="https://discord.gg/25YRFavwpj">Join support server</a>
         </div>
       </div>
 
@@ -120,7 +78,8 @@
         <h2>Changelog</h2>
         <p>
           Release notes are posted to <code>#our-bot-updates</code> on the support server.
-          The latest version is also served here as
+          The latest version is also rendered here as the
+          <a href="changelog.html">changelog</a>, and as raw
           <a href="https://justsadnyx-ux.github.io/supportly/changelog.md">changelog.md</a>.
         </p>
       </div>
@@ -130,7 +89,7 @@
         <p>
           Supportly runs on any host with Python 3.11 + MongoDB (a VPS, Railway/Fly.io, or your Windows VM).
           GitHub Pages only serves these docs — it cannot run the bot. See the
-          <a href="https://justsadnyx-ux.github.io/supportly/vps.html">VPS deployment guide</a>,
+          <a href="vps.html">VPS deployment guide</a>,
           <a href="https://github.com/justsadnyx-ux/supportly/blob/master/README.md">README</a>, and
           <a href="https://github.com/justsadnyx-ux/supportly/blob/master/CONTRIBUTING.md">CONTRIBUTING</a>.
         </p>
@@ -139,7 +98,28 @@
 
     <footer>
       <p>Supportly is open source under the AGPL v3.0. &middot; Made with 💜 in froggy land.</p>
-      <p class="meta">This site is hosted on GitHub Pages from <code>/docs</code>.</p>
+      <p class="mut">Docs hosted on GitHub Pages from <code>/docs</code>.</p>
     </footer>
+
+    <script>
+      // Optional health-check badge. Only runs if meta[supportly-health-url] is non-empty.
+      // No token involved; hits a public endpoint the bot owner exposes themselves.
+      (function () {
+        var m = document.querySelector('meta[name="supportly-health-url"]');
+        var url = m ? m.content.trim() : "";
+        var box = document.getElementById("status-fallback");
+        if (!box || !url) return;
+        var dot = box.querySelector(".status-dot") || document.createElement("span");
+        dot.className = "status-dot status-unknown";
+        box.innerHTML = "";
+        box.appendChild(dot);
+        var lbl = document.createElement("span"); lbl.className = "mut"; lbl.textContent = "checking…";
+        box.appendChild(lbl);
+        fetch(url, { cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json().catch(function(){return {ok:true};}) : Promise.reject(r); })
+          .then(function () { dot.className = "status-dot status-online"; lbl.textContent = "online"; })
+          .catch(function () { dot.className = "status-dot status-offline"; lbl.textContent = "offline"; });
+      })();
+    </script>
   </body>
 </html>

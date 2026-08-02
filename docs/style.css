@@ -1,0 +1,89 @@
+/* Supportly docs — shared dark theme (static, no framework). */
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: radial-gradient(1200px 500px at 50% -120px, #191a1e 0%, #0f1013 60%, #0f1013 100%);
+  color: #e6e8ec;
+  line-height: 1.65;
+}
+
+a { color: #7289ef; color: color-mix(in srgb, #5865f2 75%, #7289ef 25%); }
+a:where(.btn) {
+  display: inline-block; padding: .55rem .95rem; border-radius: 6px; text-decoration: none;
+  font-weight: 620; border: 1px solid transparent; background: #5865f2; color: #fff;
+  box-shadow: 0 6px 16px #5865f233; margin: .3rem 0; transition: transform .08s ease, box-shadow .15s ease;
+}
+a.btn:hover { transform: translateY(-1px); }
+a.outline { background: transparent; border-color: #383a40; box-shadow: none; }
+a.outline:hover { background: #232529; }
+
+header { padding: 3.2rem 1.5rem 1.6rem; text-align: center; }
+header h1 {
+  font-size: 2.3rem; margin: 0; letter-spacing: -.01em;
+  background: linear-gradient(90deg, #fff, #a9adb7 40%, #5865f2 70%, #7289ef);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+header .tagline { color: #9fb0d9; margin: .5rem 0 1.4rem; font-size: 1.05rem; }
+header .pill {
+  display:inline-block; padding:.12rem .5rem; border-radius:999px;
+  background:#232529; border:1px solid #383a40; color:#57f287; font-size:.72rem;
+}
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+.main { display: flex; gap: 1.5rem; }
+@media (max-width: 979px) { .main { flex-direction: column; } }
+
+.sidenav { position: sticky; top: 2rem; align-self: start; min-width: 200px; }
+.sidenav ol { padding-left: 1.05rem; margin: 0; color: #9fb0d9; font-size: .9rem; }
+.sidenav li { margin: .35rem 0; }
+.sidenav a { color: #9fb0d9; text-decoration: none; }
+.sidenav a:hover { color: #fff; text-decoration: underline; }
+.content { flex: 1; min-width: 0; }
+
+.card {
+  background: #191a1e; border: 1px solid #232529; border-left: 3px solid #5865f2;
+  border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1.2rem 0;
+}
+.card.warn { border-left-color: #f59e0b; }
+.card.warn h2 { color: #fbbf24; }
+.card h2 { margin: 0 0 .45rem; font-size: 1.08rem; color: #fff; }
+.card p { margin: .45rem 0; }
+.mut, .muted { color: #7a7f8a; font-size: .85rem; }
+.step { display: flex; gap: .8rem; align-items: flex-start; margin: .6rem 0; }
+.step-num {
+  font-size: .8rem; font-weight: 700;
+  background: #232529; border: 1px solid #383a40; color: #7289ef;
+  padding: .12rem .5rem; border-radius: 5px; min-width: 1.8rem; text-align: center;
+}
+
+pre {
+  background: #0f1114; border: 1px solid #232529; border-radius: 8px;
+  padding: .9rem 1rem; overflow:auto; font-size: .86rem; line-height: 1.55; position: relative;
+}
+pre code { background: none; padding: 0; color: #cdd6f4; white-space: pre-wrap; word-break: break-word; }
+.code-toolbar { display: flex; justify-content: flex-end; gap: .35rem; margin-bottom: -.1rem; }
+.copybtn {
+  font-family: ui-monospace, monospace; font-size: .75rem; padding: .25rem .6rem;
+  border-radius: 5px; border: 1px solid #383a40; background: #232529; color: #e6e8ec; cursor: pointer;
+}
+.copybtn:hover { background: #2b2d32; color: #fff; }
+.copybtn.copied { color: #57f287; }
+
+details { background: #141518; border: 1px solid #232529; border-radius: 8px; padding: .6rem .9rem; margin: .8rem 0; }
+summary { cursor: pointer; user-select: none; font-weight: 600; color: #9fb0d9; }
+
+nav.docs {
+  display: flex; justify-content: center; gap: 1rem; padding: .8rem 0 1.4rem; border-bottom: 1px solid #232529; margin: -1.4rem auto 1.6rem;
+}
+nav.docs a { color: #9fb0d9; font-size: .9rem; }
+
+footer { text-align: center; padding: 2rem; color: #7a7f8a; font-size: .78rem; border-top: 1px solid #232529; }
+
+/* status badge */
+.status-dot { display:inline-block; width:.7rem; height:.7rem; border-radius:50%; margin-right:.35rem; vertical-align:middle; }
+.status-online { background:#57f287; box-shadow:0 0 8px #57f28766; }
+.status-offline { background:#f44336; }
+.status-unknown { background:#666; }

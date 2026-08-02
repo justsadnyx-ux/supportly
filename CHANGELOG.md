@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# v1.0.9
+
+### Changed
+* Docs site UI unified across `index.html`, `vps.html`, and a new `changelog.html`; shared `style.css` with copy-to-clipboard and smooth-scroll.
+* Changelog rendered as styled version cards; latest release fetched live from the public GitHub Releases API (no token).
+* `?update` is a read-only check (no pull/restart); posts the full latest changelog to `#our-bot-updates`.
+
+### Added
+* `docs/vps.html` VPS deployment guide (systemd unit, secrets via `/etc/default/supportly`).
+* Optional public health-status badge on the homepage (configured via the `supportly-health-url` meta; off by default).
+
 # v1.0.8
 
 ### Changed
