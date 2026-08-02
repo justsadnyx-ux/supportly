@@ -2037,143 +2037,51 @@ class Utility(commands.Cog):
     @trigger_typing
     async def update(self, ctx, *, flag: str = ""):
         """
-        Update Supportly.
-        To stay up-to-date with the latest commit from GitHub, specify "force" as the flag.
-        """
+        Check Supportly for updates (read-only).
 
+        Reports the current vs. latest version to the configured update channel
+        (`#our-bot-updates`) without pulling or restarting the bot.
+        """
         changelog = await Changelog.from_url(self.bot)
         latest = changelog.latest_version
 
         desc = (
-            f"The latest version is [`{self.bot.version}`]"
+            f"The latest version is [`{latest.version}`]"
             "(https://github.com/justsadnyx-ux/supportly/blob/master/bot.py#L1)"
         )
 
-        if self.bot.version >= Version(latest.version) and flag.lower() != "force":
-            embed = discord.Embed(title="Already up to date", description=desc, color=self.bot.main_color)
+        embed = discord.Embed(title="Update check", description=desc, color=self.bot.main_color)
+        embed.set_author(
+            name=f"v{self.bot.version} -> v{latest.version}",
+            icon_url=self.bot.user.display_avatar.url if self.bot.user.display_avatar else None,
+            url=latest.url,
+        )
+        embed.set_footer(text=f"Current version: v{self.bot.version}")
 
-            data = await self.bot.api.get_user_info()
-            if data:
-                user = data["user"]
-                embed.set_author(
-                    name=user["username"],
-                    icon_url=user["avatar_url"] if user["avatar_url"] else None,
-                    url=user["url"],
-                )
-            await ctx.send(embed=embed)
+        if self.bot.version < Version(latest.version):
+            embed.description = (
+                f"The bot is **outdated**. Latest is [`v{latest.version}`]"
+                f"({latest.url}), you are on [`v{self.bot.version}`]"
+                "(https://github.com/justsadnyx-ux/supportly/blob/master/bot.py#L1)."
+            )
+            embed.color = self.bot.error_color
         else:
-            error = None
-            data = {}
-            try:
-                # update fork if gh_token exists
-                data = await self.bot.api.update_repository()
-            except InvalidConfigError:
-                pass
-            except ClientResponseError as exc:
-                error = exc
+            embed.description = (
+                f"The bot is **up to date**. Latest is [`v{latest.version}`]"
+                f"({latest.url}), you are on [`v{self.bot.version}`]"
+                "(https://github.com/justsadnyx-ux/supportly/blob/master/bot.py#L1)."
+            )
+            embed.color = self.bot.main_color
 
-            if self.bot.hosting_method == HostingMethod.HEROKU:
-                if error is not None:
-                    embed = discord.Embed(
-                        title="Update failed",
-                        description=f"Error status: {error.status}.\nError message: {error.message}",
-                        color=self.bot.error_color,
-                    )
-                    return await ctx.send(embed=embed)
-                if not data:
-                    # invalid gh_token
-                    embed = discord.Embed(
-                        title="Update failed",
-                        description="Invalid Github token.",
-                        color=self.bot.error_color,
-                    )
-                    return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
-                commit_data = data["data"]
-                user = data["user"]
-                if commit_data and commit_data.get("html_url"):
-                    embed = discord.Embed(color=self.bot.main_color)
+        update_channel = self.bot.update_channel
+        if update_channel is not None and update_channel.id != ctx.channel.id:
+            await update_channel.send(embed=embed)
 
-                    embed.set_footer(text=f"Updating Supportly v{self.bot.version} -> v{latest.version}")
-
-                    embed.set_author(
-                        name=user["username"] + " - Updating bot",
-                        icon_url=user["avatar_url"] if user["avatar_url"] else None,
-                        url=user["url"],
-                    )
-
-                    embed.description = latest.description
-                    for name, value in latest.fields.items():
-                        embed.add_field(name=name, value=truncate(value, 200))
-
-                    html_url = commit_data["html_url"]
-                    short_sha = commit_data["sha"][:6]
-                    embed.add_field(name="Merge Commit", value=f"[`{short_sha}`]({html_url})")
-                else:
-                    embed = discord.Embed(
-                        title="Already up to date",
-                        description="No further updates required.",
-                        color=self.bot.main_color,
-                    )
-                    embed.set_footer(text="Force update")
-                    embed.set_author(
-                        name=user["username"],
-                        icon_url=user["avatar_url"] if user["avatar_url"] else None,
-                        url=user["url"],
-                    )
-                await ctx.send(embed=embed)
-            else:
-                command = "git pull"
-                proc = await asyncio.create_subprocess_shell(
-                    command,
-                    stderr=PIPE,
-                    stdout=PIPE,
-                )
-                err = await proc.stderr.read()
-                err = err.decode("utf-8").rstrip()
-                res = await proc.stdout.read()
-                res = res.decode("utf-8").rstrip()
-
-                if err and not res:
-                    embed = discord.Embed(
-                        title="Update failed",
-                        description=err,
-                        color=self.bot.error_color,
-                    )
-                    await ctx.send(embed=embed)
-
-                elif res != "Already up to date.":
-                    logger.info("Bot has been updated.")
-                    await self.bot.send_changelog_notification(latest)
-
-                    embed = discord.Embed(
-                        title="Bot has been updated",
-                        color=self.bot.main_color,
-                    )
-                    embed.set_footer(text=f"Updating Supportly v{self.bot.version} " f"-> v{latest.version}")
-                    embed.description = latest.description
-                    for name, value in latest.fields.items():
-                        embed.add_field(name=name, value=truncate(value, 200))
-
-                    if self.bot.hosting_method == HostingMethod.OTHER:
-                        embed.description = (
-                            "The bot is restarting automatically. "
-                            "If it does not come back online, please start it manually."
-                        )
-
-                    update_channel = self.bot.update_channel
-                    if update_channel is not None and update_channel.id != ctx.channel.id:
-                        await update_channel.send(embed=embed)
-                    await ctx.send(embed=embed)
-                    return await self.bot.close()
-                else:
-                    embed = discord.Embed(
-                        title="Already up to date",
-                        description=desc,
-                        color=self.bot.main_color,
-                    )
-                    embed.set_footer(text="Force update")
-                    await ctx.send(embed=embed)
+        changelog_embed = latest.embed
+        changelog_embed.set_footer(text=f"Current version: v{self.bot.version}")
+        await self.bot.send_changelog_notification(latest)
 
     @commands.command(hidden=True, name="eval")
     @checks.has_permissions(PermissionLevel.OWNER)

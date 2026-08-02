@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# v1.0.8
+
+### Changed
+* `?update` is now a read-only update *check*: it reports the current vs. latest version and posts the full latest changelog to `#our-bot-updates`, but no longer pulls or restarts the bot.
+* GitHub Pages site (`docs/index.html`) refreshed with a hand-written design; docs still hosted on Pages (not the bot — the bot runs locally and reads its token from `.env`).
+
+### Added
+* `#our-bot-updates` (1533409707409018992) receives the full latest changelog embed on each `?update` check.
+
 # v1.0.7
 
 ### Changed

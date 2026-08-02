@@ -1,4 +1,4 @@
-__version__ = "1.0.7"
+﻿__version__ = "1.0.8"
 
 
 import asyncio
@@ -1524,7 +1524,7 @@ class SupportlyBot(commands.Bot):
                     if queued:
                         # Send a brief acknowledgment that command is queued
                         try:
-                            await ctx.message.add_reaction("⏳")
+                            await ctx.message.add_reaction("â³")
                         except Exception as e:
                             logger.warning("Failed to add queued-reaction: %s", e)
                         continue
@@ -1546,7 +1546,7 @@ class SupportlyBot(commands.Bot):
                                 thread.snooze_data = log_entry.get("snooze_data")
                         except Exception:
                             logger.debug(
-                                "Failed to add queued command reaction (⏳).",
+                                "Failed to add queued command reaction (â³).",
                                 exc_info=True,
                             )
                     try:
@@ -1744,7 +1744,7 @@ class SupportlyBot(commands.Bot):
             # Send notification to the thread channel
             if existing_thread.channel:
                 await existing_thread.channel.send(
-                    f"ℹ️ {member.mention} reacted to contact and their snoozed thread has been unsnoozed."
+                    f"â„¹ï¸ {member.mention} reacted to contact and their snoozed thread has been unsnoozed."
                 )
             return
 
