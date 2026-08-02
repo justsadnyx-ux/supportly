@@ -2134,31 +2134,10 @@ class Thread:
         ):
             logger.info("Sending a message to %s when DM disabled is set.", self.recipient)
 
-        # Best-effort typing with snooze-aware retry: if channel was deleted during snooze, restore and retry once
+        # Typing indicators are intentionally disabled for instant replies.
+        # If the destination was deleted while snoozed, the send-path restore
+        # below (NotFound handling) recreates the thread.
         restored = False
-        try:
-            await destination.typing()
-        except discord.NotFound:
-            # Unknown Channel: if snoozed or we have snooze data, attempt to restore and retry once
-            if isinstance(destination, discord.TextChannel) and (self.snoozed or self.snooze_data):
-                logger.info("Thread channel missing while typing; attempting restore from snooze.")
-                try:
-                    await self.restore_from_snooze()
-                    destination = self.channel or destination
-                    restored = True
-                    await destination.typing()
-                except Exception as e:
-                    logger.warning("Restore/typing retry failed: %s", e)
-                    raise
-            else:
-                logger.warning("Channel not found.")
-                raise
-        except (discord.Forbidden, discord.HTTPException, Exception) as e:
-            logger.warning(
-                "Unable to send typing to %s: %s. Continuing without typing.",
-                destination,
-                e,
-            )
 
         if not from_mod and not note:
             mentions = await self.get_notifications()

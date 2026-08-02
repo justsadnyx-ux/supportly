@@ -1,4 +1,4 @@
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 
 import asyncio
@@ -368,6 +368,34 @@ class SupportlyBot(commands.Bot):
             self.config.remove("update_channel_id")
 
         return self.log_channel
+
+    async def send_changelog_dms(self, latest) -> None:
+        """DM the latest changelog to the owner(s) and all members of the main server."""
+        try:
+            embed = latest.embed
+        except Exception:
+            logger.warning("Failed to build changelog embed for DM.", exc_info=True)
+            return
+
+        targets = set(self.bot_owner_ids)
+        guild = self.guild
+        if guild is not None:
+            targets.update(member.id for member in guild.members)
+
+        sent = 0
+        for user_id in targets:
+            user = self.get_user(user_id)
+            if user is None:
+                try:
+                    user = await self.fetch_user(user_id)
+                except Exception:
+                    continue
+            try:
+                await user.send(embed=embed)
+                sent += 1
+            except Exception:
+                logger.debug("Could not DM changelog to user %s.", user_id)
+        logger.info("Sent changelog DM to %s user(s).", sent)
 
     async def wait_for_connected(self) -> None:
         await self.wait_until_ready()
@@ -1941,13 +1969,6 @@ class SupportlyBot(commands.Bot):
                 return
 
         if isinstance(exception, (commands.BadArgument, commands.BadUnionArgument)):
-            try:
-                await context.typing()
-            except Exception:
-                logger.debug(
-                    "Failed to start typing context for command error feedback.",
-                    exc_info=True,
-                )
             await context.send(embed=discord.Embed(color=self.error_color, description=str(exception)))
         elif isinstance(exception, commands.CommandNotFound):
             logger.warning("CommandNotFound: %s", exception)
@@ -2085,6 +2106,7 @@ class SupportlyBot(commands.Bot):
                         message = "\n\nDo manually update dependencies if your bot has crashed."
 
                     logger.info("Bot has been updated.")
+                    await self.send_changelog_dms(latest)
                     channel = self.update_channel
                     if self.hosting_method in (
                         HostingMethod.PM2,

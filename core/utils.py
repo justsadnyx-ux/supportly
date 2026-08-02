@@ -439,12 +439,8 @@ class _SafeTyping:
         self._cm = None
 
     async def __aenter__(self):
-        try:
-            self._cm = self._target.typing()
-            return await self._cm.__aenter__()
-        except Exception:
-            # typing is best-effort; ignore any failure
-            self._cm = None
+        # Typing indicators are intentionally disabled for instant replies.
+        return None
 
     async def __aexit__(self, exc_type, exc, tb):
         if self._cm is not None:

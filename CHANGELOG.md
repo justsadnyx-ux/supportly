@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# v1.0.1
+
+### Changed
+* Removed typing indicators for instant replies.
+* Changelogs are now DMed to the owner(s) and all server members whenever a new release is detected.
+
 # v1.0.0
 
 ### Added
