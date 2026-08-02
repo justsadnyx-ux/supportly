@@ -2143,7 +2143,7 @@ class Utility(commands.Cog):
 
                 elif res != "Already up to date.":
                     logger.info("Bot has been updated.")
-                    await self.bot.send_changelog_dms(latest)
+                    await self.bot.send_changelog_notification(latest)
 
                     embed = discord.Embed(
                         title="Bot has been updated",

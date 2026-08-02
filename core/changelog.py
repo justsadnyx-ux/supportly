@@ -54,7 +54,7 @@ class Version:
         self.version = version.lstrip("vV")
         self.lines = lines.strip()
         self.fields = {}
-        self.changelog_url = f"https://github.com/justsadnyx-ux/supportly/blob/{branch}/CHANGELOG.md"
+        self.changelog_url = "https://justsadnyx-ux.github.io/supportly/"
         self.description = ""
         self.parse()
 
@@ -81,7 +81,7 @@ class Version:
 
     @property
     def url(self) -> str:
-        return f"{self.changelog_url}#v{self.version[::2]}"
+        return f"{self.changelog_url}changelog.md"
 
     @property
     def embed(self) -> Embed:
@@ -187,17 +187,20 @@ class Changelog:
         if branch not in ("master", "development"):
             branch = "master"
 
-        url = url or f"https://raw.githubusercontent.com/justsadnyx-ux/supportly/{branch}/CHANGELOG.md"
+        pages_url = "https://justsadnyx-ux.github.io/supportly/changelog.md"
+        repo_url = url or f"https://raw.githubusercontent.com/justsadnyx-ux/supportly/{branch}/CHANGELOG.md"
 
-        try:
-            async with await bot.session.get(url) as resp:
-                if resp.status == 200:
-                    changelog = cls(bot, branch, await resp.text())
-                    if changelog.versions:
-                        return changelog
-        except Exception:
-            logger.warning("Failed to fetch changelog from GitHub, falling back to the local file.", exc_info=True)
+        for source_url in (pages_url, repo_url):
+            try:
+                async with await bot.session.get(source_url) as resp:
+                    if resp.status == 200:
+                        changelog = cls(bot, branch, await resp.text())
+                        if changelog.versions:
+                            return changelog
+            except Exception:
+                logger.debug("Failed to fetch changelog from %s.", source_url, exc_info=True)
 
+        logger.warning("Falling back to the local CHANGELOG.md file.")
         changelog_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "CHANGELOG.md")
         with open(changelog_path, "r", encoding="utf-8") as f:
             return cls(bot, branch, f.read())
