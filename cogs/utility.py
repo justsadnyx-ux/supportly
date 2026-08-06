@@ -2073,8 +2073,6 @@ class Utility(commands.Cog):
             )
             embed.color = self.bot.main_color
 
-        await ctx.send(embed=embed)
-
         update_channel = self.bot.update_channel
         if update_channel is not None and update_channel.id != ctx.channel.id:
             await update_channel.send(embed=embed)
