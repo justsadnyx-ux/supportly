@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# v1.1.4
+
+### Changed
+* Verification release: confirms the fully automatic update pipeline works end to end on this deployment — the bot detects the newer version from the changelog, runs `git pull`, posts the changelog + "Bot has been updated" embed to `#our-bot-updates`, and restarts itself with no manual steps.
+
 # v1.1.3
 
 ### Fixed
