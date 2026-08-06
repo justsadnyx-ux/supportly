@@ -1,4 +1,4 @@
-﻿__version__ = "1.1.0"
+﻿__version__ = "1.1.1"
 
 
 import asyncio
@@ -666,6 +666,10 @@ class SupportlyBot(commands.Bot):
         self.autoupdate.start()
         self.log_expiry.start()
         self._started = True
+        # Check for a newer release shortly after boot instead of waiting for
+        # the first 15-minute loop iteration, so a fresh start picks up any
+        # new version immediately.
+        self.loop.create_task(self._initial_autoupdate_check())
 
     async def convert_emoji(self, name: str) -> str:
         ctx = SimpleNamespace(bot=self, guild=self.supportly_guild)
@@ -2032,10 +2036,11 @@ class SupportlyBot(commands.Bot):
         logger.debug("Starting metadata loop.")
         logger.line("debug")
 
-    @tasks.loop(hours=1)
+    @tasks.loop(minutes=15)
     async def autoupdate(self):
         changelog = await Changelog.from_url(self)
         latest = changelog.latest_version
+        logger.info("Autoupdate check: current v%s, latest v%s.", self.version, latest.version)
 
         if self.version < Version(latest.version):
             error = None
@@ -2159,6 +2164,16 @@ class SupportlyBot(commands.Bot):
             logger.warning("Autoupdates disabled.")
             self.autoupdate.cancel()
             return
+
+    async def _initial_autoupdate_check(self):
+        """Run a single autoupdate check shortly after boot so a new release is picked up immediately."""
+        try:
+            await asyncio.sleep(30)
+            if not self.autoupdate.is_running():
+                return
+            await self.autoupdate()
+        except Exception:
+            logger.debug("Initial autoupdate check failed.", exc_info=True)
 
     @tasks.loop(hours=1, reconnect=False)
     async def log_expiry(self):

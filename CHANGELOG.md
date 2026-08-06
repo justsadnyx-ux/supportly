@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# v1.1.1
+
+### Changed
+* Auto-updates are now enabled by default on this deployment (`DISABLE_AUTOUPDATES=false`): the bot checks the changelog every 15 minutes and again shortly after every boot.
+* When a newer version exists, the bot automatically runs `git pull`, posts the full changelog to `#our-bot-updates`, and restarts itself — no `?update` needed.
+* Each check logs `Autoupdate check: current vX, latest vY` so the loop's activity is visible.
+
 # v1.1.0
 
 ### Performance
