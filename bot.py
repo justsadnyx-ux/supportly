@@ -1,4 +1,4 @@
-﻿__version__ = "1.0.9"
+﻿__version__ = "1.1.0"
 
 
 import asyncio
@@ -95,6 +95,8 @@ class SupportlyBot(commands.Bot):
 
         self.threads = ThreadManager(self)
         self._message_queues = {}  # User ID -> asyncio.Queue for message ordering
+        self._emoji_cache = None  # (sent, blocked) resolved once; invalidated on config change
+        self._emoji_cache_key = None
 
         log_dir = os.path.join(temp_dir, "logs")
         if not os.path.exists(log_dir):
@@ -697,6 +699,10 @@ class SupportlyBot(commands.Bot):
         return guild.get_member(member_id) or await guild.fetch_member(member_id)
 
     async def retrieve_emoji(self) -> typing.Tuple[str, str]:
+        cache_key = (self.config.get("sent_emoji"), self.config.get("blocked_emoji"))
+        if self._emoji_cache is not None and self._emoji_cache_key == cache_key:
+            return self._emoji_cache
+
         sent_emoji = self.config["sent_emoji"]
         blocked_emoji = self.config["blocked_emoji"]
 
@@ -716,7 +722,9 @@ class SupportlyBot(commands.Bot):
                 blocked_emoji = self.config.remove("blocked_emoji")
                 await self.config.update()
 
-        return sent_emoji, blocked_emoji
+        self._emoji_cache = (sent_emoji, blocked_emoji)
+        self._emoji_cache_key = cache_key
+        return self._emoji_cache
 
     def check_account_age(self, author: discord.Member) -> bool:
         account_age = self.config.get("account_age")
@@ -1287,6 +1295,7 @@ class SupportlyBot(commands.Bot):
         view = StringView(message.content)
         ctx = cls(prefix=self.prefix, view=view, bot=self, message=message)
         thread = await self.threads.find(channel=ctx.channel)
+        ctx.thread = thread
 
         if message.author.id == self.user.id:  # type: ignore
             return [ctx]
@@ -1485,30 +1494,40 @@ class SupportlyBot(commands.Bot):
                 content = ""
             await self.mention_channel.send(content=content, embed=em)
 
-        # --- MODERATOR-ONLY MESSAGE LOGGING ---
-        # If a moderator sends a message directly in a thread channel (not via supportly command), log it
-        if not message.author.bot and not isinstance(message.channel, discord.DMChannel):
-            thread = await self.threads.find(channel=message.channel)
+        if isinstance(message.channel, discord.DMChannel):
+            return await self.process_commands(message)
+
+        # Build invocation contexts ONCE per message and reuse them for both the
+        # moderator message-logging check and command dispatch, so the thread
+        # lookup and prefix/alias parsing only run a single time per message.
+        contexts = None
+        if not message.author.bot:
+            contexts = await self.get_contexts(message)
+
+            # --- MODERATOR-ONLY MESSAGE LOGGING ---
+            # If a moderator sends a message directly in a thread channel (not via supportly command), log it
+            thread = contexts[0].thread if contexts else None
             if thread is not None:
-                ctxs = await self.get_contexts(message)
-                is_command = any(ctx.command for ctx in ctxs)
+                is_command = any(ctx.command for ctx in contexts)
                 if not is_command:
                     # Only log if not a command
                     perms = message.channel.permissions_for(message.author)
                     if perms.manage_messages or perms.administrator:
                         await self.api.append_log(message, type_="internal")
 
-        await self.process_commands(message)
+        await self.process_commands(message, contexts)
 
-    async def process_commands(self, message):
+    async def process_commands(self, message, contexts=None):
         if message.author.bot:
             return
 
         if isinstance(message.channel, discord.DMChannel):
             return await self._queue_dm_message(message)
 
-        ctxs = await self.get_contexts(message)
-        for ctx in ctxs:
+        if contexts is None:
+            contexts = await self.get_contexts(message)
+
+        for ctx in contexts:
             if ctx.command:
                 if not any(1 for check in ctx.command.checks if hasattr(check, "permission_level")):
                     logger.debug(
@@ -1518,13 +1537,13 @@ class SupportlyBot(commands.Bot):
                     checks.has_permissions(PermissionLevel.INVALID)(ctx.command)
 
                 # Check if thread is unsnoozing and queue command if so
-                thread = await self.threads.find(channel=ctx.channel)
+                thread = ctx.thread
                 if thread and thread._unsnoozing:
                     queued = await thread.queue_command(ctx, ctx.command)
                     if queued:
                         # Send a brief acknowledgment that command is queued
                         try:
-                            await ctx.message.add_reaction("â³")
+                            await ctx.message.add_reaction("⏳")
                         except Exception as e:
                             logger.warning("Failed to add queued-reaction: %s", e)
                         continue
@@ -1532,7 +1551,7 @@ class SupportlyBot(commands.Bot):
                 await self.invoke(ctx)
                 continue
 
-            thread = await self.threads.find(channel=ctx.channel)
+            thread = ctx.thread
             if thread is not None:
                 # If thread is snoozed (moved), auto-unsnooze when a mod sends a message directly in channel
                 behavior = (self.config.get("snooze_behavior") or "delete").lower()
@@ -1546,7 +1565,7 @@ class SupportlyBot(commands.Bot):
                                 thread.snooze_data = log_entry.get("snooze_data")
                         except Exception:
                             logger.debug(
-                                "Failed to add queued command reaction (â³).",
+                                "Failed to add queued command reaction (⏳).",
                                 exc_info=True,
                             )
                     try:
@@ -1744,7 +1763,7 @@ class SupportlyBot(commands.Bot):
             # Send notification to the thread channel
             if existing_thread.channel:
                 await existing_thread.channel.send(
-                    f"â„¹ï¸ {member.mention} reacted to contact and their snoozed thread has been unsnoozed."
+                    f"ℹ {member.mention} reacted to contact and their snoozed thread has been unsnoozed."
                 )
             return
 

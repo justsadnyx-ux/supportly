@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# v1.1.0
+
+### Performance
+* Messages are processed in a single pass: invocation contexts and the thread lookup are built once per message and reused for both moderator message-logging and command dispatch (previously the thread could be looked up 2–4 times and contexts parsed twice per message).
+* Reaction emoji (`sent_emoji`/`blocked_emoji`) are resolved once and cached, invalidating automatically when their config values change; previously they were re-resolved on every DM and every reply.
+
+### Fixed
+* Fixed corrupted (double-encoded) emoji characters in the source that made the "queued command" reaction (`⏳`) and an unsnooze log message render as garbled text.
+
+# v1.0.9
+
+### Changed
+* Docs site UI unified across `index.html`, `vps.html`, and a new `changelog.html`; shared `style.css` with copy-to-clipboard and smooth-scroll.
+* Changelog rendered as styled version cards; latest release fetched live from the public GitHub Releases API (no token).
+* `?update` is a read-only check (no pull/restart); posts the full latest changelog to `#our-bot-updates`.
+
+### Added
+* `docs/vps.html` VPS deployment guide (systemd unit, secrets via `/etc/default/supportly`).
+* Optional public health-status badge on the homepage (configured via the `supportly-health-url` meta; off by default).
+
 # v1.0.8
 
 ### Changed

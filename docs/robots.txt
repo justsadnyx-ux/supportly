@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://justsadnyx-ux.github.io/supportly/sitemap.xml

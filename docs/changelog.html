@@ -4,8 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Supportly changelog — release notes posted to #our-bot-updates." />
+    <meta name="theme-color" content="#57f287" />
+    <link rel="canonical" href="https://justsadnyx-ux.github.io/supportly/changelog.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Supportly" />
+    <meta property="og:title" content="Changelog &middot; Supportly" />
+    <meta property="og:description" content="Release notes for the Supportly Discord support bot. Newest first." />
+    <meta property="og:url" content="https://justsadnyx-ux.github.io/supportly/changelog.html" />
+    <meta name="twitter:card" content="summary" />
     <title>Changelog &middot; Supportly</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://api.github.com" />
+    <link rel="preconnect" href="https://github.com" />
   </head>
   <body>
     <header>
@@ -26,7 +36,7 @@
       <div class="card" id="latest-card">
         <h2>Latest release</h2>
         <p class="mut">
-          <span class="pill">v1.0.9</span> &middot;
+          <span class="pill">v1.1.0</span> &middot;
           Fetching the full release notes from the public GitHub Releases API&hellip;
           (GitHub enforces unauthenticated rate limits; if the live fetch is throttled, the fallback message below appears — the latest version <em>tag</em> is always shown.)
         </p>
@@ -36,6 +46,38 @@
         <h2>Older releases</h2>
         <p class="mut">Below are rendered from <code>CHANGELOG.md</code>. Newest first.</p>
       </div>
+
+      <!-- v1.1.0 -->
+      <details open>
+        <summary><span class="pill">v1.1.0</span> &middot; Speed pass + emoji fixes</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Performance</h3>
+          <ul style="margin:.25rem 0;">
+            <li>Messages are processed in a single pass: contexts and the thread lookup are built once per message instead of 2–4 times.</li>
+            <li>Reaction emoji are resolved once and cached, invalidating when their config changes.</li>
+          </ul>
+          <h3 style="font-size:.95rem;color:#fff;">Fixed</h3>
+          <ul style="margin:.25rem 0;">
+            <li>Corrupted (double-encoded) emoji made the queued-command reaction and an unsnooze log render as garbled text; now send/display correctly.</li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- v1.0.9 -->
+      <details>
+        <summary><span class="pill">v1.0.9</span> &middot; Unified docs UI + changelog page</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Changed</h3>
+          <ul style="margin:.25rem 0;">
+            <li>Docs site UI unified across <code>index.html</code>, <code>vps.html</code>, and a new <code>changelog.html</code>; shared <code>style.css</code>.</li>
+            <li><code>?update</code> is a read-only check; posts the full latest changelog to <code>#our-bot-updates</code>.</li>
+          </ul>
+          <h3 style="font-size:.95rem;color:#fff;">Added</h3>
+          <ul style="margin:.25rem 0;">
+            <li><code>docs/vps.html</code> VPS deployment guide; optional public health-status badge on the homepage.</li>
+          </ul>
+        </div>
+      </details>
 
       <!-- v1.0.8 -->
       <details open>

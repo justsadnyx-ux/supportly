@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# v1.1.0
+
+### Performance
+* Messages are processed in a single pass: invocation contexts and the thread lookup are built once per message and reused for both moderator message-logging and command dispatch (previously the thread could be looked up 2–4 times and contexts parsed twice per message).
+* Reaction emoji (`sent_emoji`/`blocked_emoji`) are resolved once and cached, invalidating automatically when their config values change; previously they were re-resolved on every DM and every reply.
+
+### Fixed
+* Fixed corrupted (double-encoded) emoji characters in the source that made the "queued command" reaction (`⏳`) and an unsnooze log message render as garbled text.
+
 # v1.0.9
 
 ### Changed
