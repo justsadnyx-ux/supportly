@@ -36,7 +36,7 @@
       <div class="card" id="latest-card">
         <h2>Latest release</h2>
         <p class="mut">
-          <span class="pill">v1.1.2</span> &middot;
+          <span class="pill">v1.1.3</span> &middot;
           Fetching the full release notes from the public GitHub Releases API&hellip;
           (GitHub enforces unauthenticated rate limits; if the live fetch is throttled, the fallback message below appears — the latest version <em>tag</em> is always shown.)
         </p>
@@ -46,6 +46,17 @@
         <h2>Older releases</h2>
         <p class="mut">Below are rendered from <code>CHANGELOG.md</code>. Newest first.</p>
       </div>
+
+      <!-- v1.1.3 -->
+      <details open>
+        <summary><span class="pill">v1.1.3</span> &middot; Auto-update no longer hangs on local hosting</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Fixed</h3>
+          <ul style="margin:.25rem 0;">
+            <li>The GitHub fork-sync API call that ran before <code>git pull</code> on every hosting method (even though only Heroku uses it) could block the check indefinitely when no GitHub token is configured — leaving the bot stuck on an older version with no notification and no restart. It is now skipped unless running on Heroku.</li>
+          </ul>
+        </div>
+      </details>
 
       <!-- v1.1.2 -->
       <details open>

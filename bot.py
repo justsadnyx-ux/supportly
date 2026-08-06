@@ -1,4 +1,4 @@
-﻿__version__ = "1.1.2"
+﻿__version__ = "1.1.3"
 
 
 import asyncio
@@ -2045,13 +2045,14 @@ class SupportlyBot(commands.Bot):
         if self.version < Version(latest.version):
             error = None
             data = {}
-            try:
-                # update fork if gh_token exists
-                data = await self.api.update_repository()
-            except InvalidConfigError:
-                pass
-            except ClientResponseError as exc:
-                error = exc
+            if self.hosting_method == HostingMethod.HEROKU:
+                try:
+                    # update fork if gh_token exists
+                    data = await self.api.update_repository()
+                except InvalidConfigError:
+                    pass
+                except ClientResponseError as exc:
+                    error = exc
             if self.hosting_method == HostingMethod.HEROKU:
                 if error is not None:
                     logger.error(f"Autoupdate failed! Status: {error.status}.")
