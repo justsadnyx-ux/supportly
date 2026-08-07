@@ -20,39 +20,48 @@ jobs:
         env:
           TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         run: |
-          # Guild (Froggy): 15232510769515265606
+          # Guild (Froggy): 1523251076915265606
           # Bot user id:    1434002643642220616
-          curl -fsS -H "Authorization: Bot $TOKEN" \
+          # (Discord requires a User-Agent on every API call.)
+          code=$(curl -sS \
+            -H "User-Agent: SupportlyStatus (https://github.com/justsadnyx-ux/supportly)" \
+            -H "Authorization: Bot $TOKEN" \
             "https://discord.com/api/v10/guilds/1523251076915265606/members/1434002643642220616" \
-            -o member.json || echo "FAILED" > member.json
+            -o member.json -w "%{http_code}")
+          echo "HTTP=$code size=$(wc -c < member.json) bytes"
+          export CURL_CODE="$code"
           python3 - <<'PY'
-          import json, datetime, os
+          import json, os, datetime
+          code = os.environ.get("CURL_CODE", "")
           online = False
           status = "offline"
           activity = ""
-          text = ""
+          raw = open("member.json").read()
           try:
-              m = json.load(open("member.json"))
-              if isinstance(m, dict) and m.get("user"):
-                  p = m.get("presence") or {}
-                  s = p.get("status")
-                  acts = p.get("activities") or []
-                  if s and s != "offline":
-                      online = True
-                      status = s
-                  if acts:
-                      a = acts[0]
-                      activity = a.get("name") or ""
-                      text = a.get("state") or ""
-                      if a.get("type") == 4 and text:
-                          activity = text  # Custom Status text
-          except Exception as e:
-              status = "unknown: " + str(e)[:80]
+              m = json.loads(raw)
+          except Exception:
+              m = None
+          if isinstance(m, dict) and m.get("user"):
+              p = m.get("presence") or {}
+              s = p.get("status")
+              acts = p.get("activities") or []
+              if s and s != "offline":
+                  online = True
+                  status = s
+              elif s is None and not acts:
+                  status = "presence unavailable (Presence Intent not enabled on the dev portal)"
+              if acts:
+                  a = acts[0]
+                  activity = a.get("state") or a.get("name") or ""
+          elif isinstance(m, dict) and m.get("message"):
+              status = "discord error: " + str(m.get("message")) + " (code " + str(m.get("code")) + ")"
+          else:
+              status = "discord error: HTTP " + (code or "?") + " - " + (raw[:120] or "no body")
           out = {
               "online": online,
               "status": status,
               "activity": activity,
-              "checked_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "checked_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
           }
           json.dump(out, open("docs/status.json", "w"), indent=2)
           print("status:", out["status"], "| online:", out["online"], "| activity:", out["activity"])
