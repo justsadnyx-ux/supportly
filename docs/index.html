@@ -113,12 +113,12 @@
         fetch("status.json", { cache: "no-store" })
           .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
           .then(render)
-          .catch(function () { set(false, "offline"); });
+          .catch(function () { set("status-offline", "offline"); });
         setInterval(function () {
           fetch("status.json", { cache: "no-store" })
             .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
             .then(render)
-            .catch(function () { set(false, "offline"); });
+            .catch(function () { set("status-offline", "offline"); });
         }, 60000);
       })();
     </script>
