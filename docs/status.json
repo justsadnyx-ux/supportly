@@ -1,6 +1,6 @@
 {
-  "online": false,
-  "status": "presence unavailable (Presence Intent not enabled on the dev portal)",
+  "online": null,
+  "status": "unknown (enable Presence Intent on the Discord dev portal)",
   "activity": "",
-  "checked_at": "2026-08-07T02:37:30Z"
+  "checked_at": "2026-08-07T02:40:55Z"
 }
