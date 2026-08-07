@@ -40,9 +40,9 @@
       <div class="card">
         <h2>Bot status</h2>
         <p id="status-badge"><span class="status-dot status-unknown"></span><span class="mut">checking...</span></p>
-        <p class="mut" style="margin-top:.3rem;">
-          Live presence is polled from Discord every 5 min. If this badge shows offline, the bot
-          (or its supervisor) is not currently connected.
+        <p class="mut">
+          Refreshed every 5 min from Discord. online / offline / unknown &mdash; unknown means
+          Presence Intent is off (owner: toggle it in the Discord dev portal).
         </p>
       </div>
 
@@ -90,22 +90,24 @@
       (function () {
         var badge = document.getElementById("status-badge");
         if (!badge) return;
-        function set(online, label) {
+        function set(cls, label) {
           var dot = badge.querySelector(".status-dot") || document.createElement("span");
-          dot.className = "status-dot " + (online === true ? "status-online" : "status-offline");
+          dot.className = "status-dot " + cls;
           badge.innerHTML = "";
           badge.appendChild(dot);
           var span = document.createElement("span");
           span.className = "mut";
-          span.textContent = label || (online === true ? "online" : "offline");
+          span.textContent = label;
           badge.appendChild(span);
         }
         function render(data) {
           if (data && typeof data.online !== "undefined") {
             var act = data.activity ? " &middot; " + data.activity : "";
-            set(data.online, (data.online ? "online" : "offline") + act);
+            if (data.online === true) set("status-online", "online" + act);
+            else if (data.online === false) set("status-offline", "offline" + act);
+            else set("status-unknown", "unknown" + act);
           } else {
-            set(false, "offline");
+            set("status-offline", "offline");
           }
         }
         fetch("status.json", { cache: "no-store" })

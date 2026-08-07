@@ -48,8 +48,12 @@ jobs:
               if s and s != "offline":
                   online = True
                   status = s
-              elif s is None and not acts:
-                  status = "presence unavailable (Presence Intent not enabled on the dev portal)"
+              elif s == "offline":
+                  online = False
+                  status = "offline"
+              else:
+                  online = None  # member exists but presence not exposed
+                  status = "unknown (enable Presence Intent on the Discord dev portal)"
               if acts:
                   a = acts[0]
                   activity = a.get("state") or a.get("name") or ""
