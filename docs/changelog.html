@@ -36,8 +36,8 @@
       <div class="card" id="latest-card">
         <h2>Latest release</h2>
         <p class="mut">
-          <span class="pill">v1.1.4</span> &middot;
-          End-to-end automatic update verification. The latest version tag is also kept in
+          <span class="pill">v1.1.5</span> &middot;
+          Shutdown crash fix + docs refresh. The latest version tag is also kept in
           <a href="CHANGELOG.md">CHANGELOG.md</a> and <a href="https://github.com/justsadnyx-ux/supportly/releases">on GitHub</a>.
         </p>
       </div>
@@ -46,6 +46,22 @@
         <h2>Releases</h2>
         <p class="mut">Rendered from <code>CHANGELOG.md</code>, newest first. The same notes are posted to <code>#our-bot-updates</code> on each release.</p>
       </div>
+
+      <!-- v1.1.5 -->
+      <details open>
+        <summary><span class="pill">v1.1.5</span> &middot; Shutdown crash fix + docs refresh</summary>
+        <div style="margin-top:.6rem;">
+          <h3 style="font-size:.95rem;color:#fff;">Fixed</h3>
+          <ul style="margin:.25rem 0;">
+            <li>Stopped a crash loop that brought the bot down during shutdown (exit code -1). <code>Paginator.close()</code> no longer raises <code>NotFound</code> when the message it is cleaning up was already deleted &mdash; reaction, delete, and view-edit calls are now guarded, so shutdown and the auto-update <code>close()</code> path complete cleanly.</li>
+            <li>Console logging no longer raises <code>UnicodeEncodeError</code> on Windows when a record contains an emoji. Stdout/stderr are reconfigured to UTF-8 with character replacement after colorama initializes.</li>
+          </ul>
+          <h3 style="font-size:.95rem;color:#fff;">Changed</h3>
+          <ul style="margin:.25rem 0;">
+            <li>Docs site refresh: new FAQ page, tighter copy, ASCII-safe markup.</li>
+          </ul>
+        </div>
+      </details>
 
       <!-- v1.1.4 -->
       <details open>

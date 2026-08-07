@@ -190,23 +190,29 @@ class PaginatorSession:
             If `delete` is `True`.
         """
         if self.running:
-            sent_emoji, _ = await self.ctx.bot.retrieve_emoji()
-            await self.ctx.bot.add_reaction(self.ctx.message, sent_emoji)
+            self.running = False
+            try:
+                sent_emoji, _ = await self.ctx.bot.retrieve_emoji()
+                await self.ctx.bot.add_reaction(self.ctx.message, sent_emoji)
+            except discord.HTTPException:
+                pass
 
             if interaction:
                 message = interaction.message
             else:
                 message = self.base
 
-            self.running = False
-
             if self.view is not None:
                 self.view.stop()
-                if delete:
-                    await message.delete()
-                else:
-                    self.view.clear_items()
-                    await message.edit(view=self.view)
+                try:
+                    if delete:
+                        await message.delete()
+                    else:
+                        self.view.clear_items()
+                        await message.edit(view=self.view)
+                except discord.HTTPException:
+                    # Message may already be gone (deleted/unknown). Nothing to clean up.
+                    pass
 
 
 class PaginatorView(View):

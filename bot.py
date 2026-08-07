@@ -1,4 +1,4 @@
-﻿__version__ = "1.1.4"
+﻿__version__ = "1.1.5"
 
 
 import asyncio
@@ -29,6 +29,17 @@ try:
     from colorama import init
 
     init()
+    # colorama wraps stdout in an ANSI-to-Win32 writer that re-encodes to the
+    # console codepage (cp1252 by default). Log records containing emoji (e.g.
+    # the sent-emoji reaction character) then raise UnicodeEncodeError inside the
+    # log handler and can crash the process. Reconfigure the underlying streams
+    # to utf-8 with replacement so such writes can never raise.
+    try:
+        for stream in (sys.stdout, sys.stderr):
+            if hasattr(stream, "reconfigure"):
+                stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 except ImportError:
     pass
 

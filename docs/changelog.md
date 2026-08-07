@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# v1.1.5
+
+### Fixed
+* Stopped a crash loop that brought the bot down during shutdown (exit code -1). `Paginator.close()` no longer raises `discord.NotFound` when the message it is cleaning up was already deleted — the reaction, delete, and view-edit calls are now guarded, so shutdown and the auto-update `close()` path complete cleanly.
+* Console logging no longer raises `UnicodeEncodeError` on Windows when a record contains an emoji (the sent/reaction character). The stdout/stderr streams are reconfigured to UTF-8 with character replacement immediately after colorama initializes.
+
+### Changed
+* Docs site refresh: new FAQ page, tighter copy, and ASCII-safe markup across the static docs.
+
 # v1.1.4
 
 ### Changed
