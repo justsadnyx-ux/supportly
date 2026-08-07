@@ -58,11 +58,10 @@
       <div class="card">
         <h2>Are updates automatic?</h2>
         <p>
-          Yes. Every 15 min and once after boot, the bot compares its version to the changelog; if newer it runs
-          <code>git pull</code>, posts the changelog + an update embed to <code>#our-bot-updates</code>, and
-          restarts itself via the supervisor. No <code>?update</code> needed.
+          Yes. Every 15 min and once after boot the bot compares its version to the changelog; if newer, it runs
+          <code>git pull</code>, posts an update note to <code>#our-bot-updates</code>, and restarts. See the
+          <a href="changelog.html">changelog</a> for the fix history (v1.1.3 stop-the-hang, v1.1.5 stop-the-crash).
         </p>
-        <p class="mut">v1.1.3 fixed a hang that blocked this on local hosts (the GitHub fork-sync API call is now Heroku-only); v1.1.5 fixed a shutdown crash loop.</p>
       </div>
 
       <div class="card">
