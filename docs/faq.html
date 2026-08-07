@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Supportly FAQ - how the bot, updates, and hosting actually work." />
+    <meta name="description" content="Supportly FAQ - updates, hosting, premium." />
     <meta name="theme-color" content="#57f287" />
     <link rel="canonical" href="https://justsadnyx-ux.github.io/supportly/faq.html" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Supportly" />
     <meta property="og:title" content="FAQ &middot; Supportly" />
-    <meta property="og:description" content="Answers to common questions about running and using the Supportly Discord support bot." />
+    <meta property="og:description" content="Quick answers about the Supportly Discord bot." />
     <meta property="og:url" content="https://justsadnyx-ux.github.io/supportly/faq.html" />
     <meta name="twitter:card" content="summary" />
     <title>FAQ &middot; Supportly</title>
@@ -21,7 +21,7 @@
     <header>
       <p><span class="pill">Docs</span></p>
       <h1>FAQ</h1>
-      <p class="tagline">How the bot, the updates, and the hosting actually work.</p>
+      <p class="tagline">Updates, hosting, premium -- short.</p>
     </header>
 
     <nav class="docs">
@@ -35,113 +35,61 @@
     <div class="wrap">
 
       <div class="card">
-        <h2>How do I contact support?</h2>
+        <h2>How do I get support?</h2>
         <p>
-          The bot's presence is set to <code>DM - FOR SUPPORT</code>; that is its actual status on Discord, not a
-          description. To start a conversation, DM the bot. Your first message opens a private thread in the
-          support server, and staff reply back to you there.
+          The bot status is <code>DM - FOR SUPPORT</code>. DM it; the first message opens a private thread in the
+          support server and staff reply back to you there.
         </p>
       </div>
 
       <div class="card">
-        <h2>Why do releases post to <code>#our-bot-updates</code>?</h2>
-        <p>
-          That is the configured update channel for this bot. Every release &mdash; whether triggered manually by
-          <code>?update</code> or by the automatic updater &mdash; posts the latest changelog there instead of DMing
-          everyone. The bot never DMs server members on a new release.<sub>*</sub>
-        </p>
-        <p class="mut">
-          <sub>* Before v1.0.4 the bot did DM changelogs on release. We stopped doing that.</sub>
-        </p>
+        <h2>Why post to <code>#our-bot-updates</code>?</h2>
+        <p>That is this bot's update channel. New releases go there (never DMed to members).</p>
       </div>
 
       <div class="card">
         <h2>What does <code>?update</code> do?</h2>
         <p>
-          It is a read-only check now. It compares the running version against the latest changelog, posts that
-          changelog to <code>#our-bot-updates</code>, and reports it in chat if you have permission.
-          It does <em>not</em> pull code or restart the bot, and it does not announce anything in the channel
-          where you typed it &mdash; the result only goes to the update channel.
+          Read-only check. It posts the latest changelog to <code>#our-bot-updates</code> and reports it in chat.
+          It does not pull code, restart, or announce in the channel you typed.
         </p>
       </div>
 
       <div class="card">
         <h2>Are updates automatic?</h2>
-        <p>Yes. On this deployment the bot checks for a newer version every 15 minutes and once shortly after boot. When it finds one it:</p>
-        <ol class="sidenav" style="margin-top:1rem;">
-          <li>runs <code>git pull</code> on its own working tree,</li>
-          <li>posts the changelog plus a <em>Bot has been updated</em> embed to <code>#our-bot-updates</code>,</li>
-          <li>logs "Bot has been updated." and "Sent latest changelog to ...",</li>
-          <li>logs out, and</li>
-          <li>the supervisor process restarts it on the new version.</li>
-        </ol>
-        <p class="mut">
-          One thing the bot owner should know: the graceful logout (<code>bot.close()</code>) on Windows can take
-          a bit of time to actually tear the process down, so there is a short window on each update where the bot
-          is briefly unavailable before the restart finishes. The new process comes back on its own &mdash; no
-          manual restart needed.
+        <p>
+          Yes. Every 15 min and once after boot, the bot compares its version to the changelog; if newer it runs
+          <code>git pull</code>, posts the changelog + an update embed to <code>#our-bot-updates</code>, and
+          restarts itself via the supervisor. No <code>?update</code> needed.
         </p>
+        <p class="mut">v1.1.3 fixed a hang that blocked this on local hosts (the GitHub fork-sync API call is now Heroku-only); v1.1.5 fixed a shutdown crash loop.</p>
       </div>
 
-      <div class="card warn">
-        <h2>Why did the bot "hang" on v1.1.1?</h2>
+      <div class="card">
+        <h2>Can I host my own?</h2>
         <p>
-          The update check used to call the GitHub fork-sync API before <code>git pull</code>, even on hosts that
-          do not use Heroku (where that call matters). With no GitHub token configured that API call could block
-          indefinitely on a rate-limited endpoint, and the bot would get stuck showing the old version forever
-          &mdash; no notification, no restart. <strong>v1.1.3</strong> skips the API call entirely unless the bot
-          is running on Heroku. If you are on v1.1.3 or newer, you will not see this.
+          Yes: Python 3.11, MongoDB, a Discord bot token, and the support server. GitHub Pages only serves these
+          docs. See the <a href="vps.html">VPS guide</a>.
         </p>
       </div>
 
       <div class="card">
-        <h2>Can I run Supportly myself?</h2>
-        <p>
-          Yes &mdash; it runs anywhere with Python 3.11, a MongoDB connection, and a Discord bot token. A VPS, a
-          home server, or a Windows VM all work. See the <a href="vps.html">VPS deployment guide</a>.
-          GitHub Pages only hosts these docs; it cannot run the bot.
-        </p>
+        <h2>Premium / roles?</h2>
+        <p>Gated behind the <code>Premium</code> role in the support server; checked at runtime. No license key.</p>
       </div>
 
       <div class="card">
-        <h2>How does premium work?</h2>
+        <h2>Heroku / Docker / PM2 / systemd?</h2>
         <p>
-          Some features are gated behind the <code>Premium</code> role in the support server. The bot checks for
-          that role at runtime, so a member keeps access as long as they hold the role &mdash; no separate license key.
-        </p>
-      </div>
-
-      <div class="card">
-        <h2>Can I self-host on Heroku?</h2>
-        <p>
-          If you do, set a <code>github_token</code> variable. The auto-updater uses it to sync the fork, and
-          without it the bot disables auto-updates on Heroku rather than failing. Everywhere else (local, VPS,
-          PM2, systemd, Docker), auto-updates work without any token.
-        </p>
-      </div>
-
-      <div class="card">
-        <h2>The <code>supportly-health-url</code> meta tag -- what's that?</h2>
-        <p>
-          A meta tag on <code>index.html</code>. If you expose a public <code>/health</code> endpoint on your own
-          host, paste its URL there and the homepage shows a live online/offline dot. Leave it empty (current
-          default) and the badge stays hidden. No secrets are ever stored client-side; the badge only hits the
-          endpoint you specify.
-        </p>
-      </div>
-
-      <div class="card">
-        <h2>Is this the "real" Supportly?</h2>
-        <p>
-          Yes. This is the independent Supportly bot at <code>justsadnyx-ux/supportly</code>. The docs site lives
-          at <code>https://justsadnyx-ux.github.io/supportly/</code>. It is open source under the AGPL v3.0.
+          Auto-updates work everywhere without a token except Heroku, where you must set <code>github_token</code>
+          (without it, auto-updates disable themselves rather than failing). Docker is auto-disabled.
         </p>
       </div>
 
     </div>
 
     <footer>
-      <p>Supportly is open source under the AGPL v3.0. &middot; Docs hosted on GitHub Pages from <code>/docs</code>.</p>
+      <p>Supportly is open source under the AGPL v3.0. &middot; Docs on GitHub Pages from <code>/docs</code>.</p>
     </footer>
   </body>
 </html>

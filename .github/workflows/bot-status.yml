@@ -1,0 +1,67 @@
+name: bot-status
+
+on:
+  # GitHub Actions minimum granularity is 5 minutes for cron.
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Query Discord for the bot's presence
+        id: discord
+        env:
+          TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        run: |
+          # Guild (Froggy): 15232510769515265606
+          # Bot user id:    1434002643642220616
+          curl -fsS -H "Authorization: Bot $TOKEN" \
+            "https://discord.com/api/v10/guilds/1523251076915265606/members/1434002643642220616" \
+            -o member.json || echo "FAILED" > member.json
+          python3 - <<'PY'
+          import json, datetime, os
+          online = False
+          status = "offline"
+          activity = ""
+          text = ""
+          try:
+              m = json.load(open("member.json"))
+              if isinstance(m, dict) and m.get("user"):
+                  p = m.get("presence") or {}
+                  s = p.get("status")
+                  acts = p.get("activities") or []
+                  if s and s != "offline":
+                      online = True
+                      status = s
+                  if acts:
+                      a = acts[0]
+                      activity = a.get("name") or ""
+                      text = a.get("state") or ""
+                      if a.get("type") == 4 and text:
+                          activity = text  # Custom Status text
+          except Exception as e:
+              status = "unknown: " + str(e)[:80]
+          out = {
+              "online": online,
+              "status": status,
+              "activity": activity,
+              "checked_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+          }
+          json.dump(out, open("docs/status.json", "w"), indent=2)
+          print("status:", out["status"], "| online:", out["online"], "| activity:", out["activity"])
+          PY
+
+      - name: Commit status.json
+        if: steps.discord.outcome == 'success'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/status.json
+          git diff --staged --quiet || (git commit -m "docs: refresh bot status" && git push)
