@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -21,13 +21,14 @@
     <header>
       <p><span class="pill">Docs</span></p>
       <h1>Deploy Supportly on a VPS</h1>
-      <p class="tagline">Static docs only. The bot is a live process — it runs on a host like this Ubuntu VPS, not on GitHub Pages.</p>
+      <p class="tagline">Static docs only. The bot is a live process -- it runs on a host like this Ubuntu VPS, not on GitHub Pages.</p>
     </header>
 
     <nav class="docs">
       <a href="index.html">Home</a>
       <a href="vps.html" style="color:#fff;text-decoration:underline;">VPS guide</a>
       <a href="changelog.html">Changelog</a>
+      <a href="faq.html">FAQ</a>
     </nav>
 
     <div class="main">
@@ -85,7 +86,7 @@ sudo apt-get install -y mongodb-org</code></pre>
 <div class="code-toolbar"><span class="copybtn" onclick="copy(this)">Copy</span></div>
 <pre><code>sudo mkdir -p /data/db /var/log/mongodb
 sudo mongod --fork --logpath /var/log/mongodb/mongod.log --dbpath /data/db --bind_ip 127.0.0.1</code></pre>
-          <div class="step"><span class="step-num">5</span><span>Clone the repo and create a secret env file readable by root only. Paste your Discord bot token here — <strong>I never see it</strong>:</span></div>
+          <div class="step"><span class="step-num">5</span><span>Clone the repo and create a secret env file readable by root only. Paste your Discord bot token here -- <strong>I never see it</strong>:</span></div>
 <div class="code-toolbar"><span class="copybtn" onclick="copy(this)">Copy</span></div>
 <pre><code>git clone https://github.com/justsadnyx-ux/supportly.git
 cd supportly
@@ -93,7 +94,7 @@ python3.11 -m venv .venv
 .venv/bin/pip install -q --upgrade pip
 .venv/bin/pip install -r requirements.txt
 
-# Create /etc/default/supportly — owned by root, mode 0600
+# Create /etc/default/supportly -- owned by root, mode 0600
 sudo tee /etc/default/supportly &gt;/dev/null &lt;&lt;'ENV'
 TOKEN=YOUR_DISCORD_BOT_TOKEN
 GUILD_ID=1523251076915265606
@@ -149,7 +150,7 @@ sudo systemctl start supportly</code></pre>
               <a href="https://justsadnyx-ux.github.io/supportly/changelog.md">the Pages changelog</a>.</li>
             <li><code>?update</code> reports current vs latest and posts the full latest changelog to <code>#our-bot-updates</code>.</li>
           </ul>
-          <p class="mut">These commands run on the VPS — the bot never depends on GitHub Pages to stay alive.</p>
+          <p class="mut">These commands run on the VPS -- the bot never depends on GitHub Pages to stay alive.</p>
         </div>
 
         <div class="card">
@@ -158,7 +159,7 @@ sudo systemctl start supportly</code></pre>
             <summary>Deploy the bot on <code>git push</code> via GitHub Actions → SSH</summary>
             <p class="mut">
               Add a workflow in <code>.github/workflows/deploy.yml</code> that, on push to <code>master</code>, SSHs into the VPS and runs
-              <code>git pull &amp;&amp; systemctl restart supportly</code>. You'd store the VPS SSH key as a GitHub secret. I can write this workflow for you — but only run it after you confirm the SSH key secret is set by you.
+              <code>git pull &amp;&amp; systemctl restart supportly</code>. You'd store the VPS SSH key as a GitHub secret. I can write this workflow for you -- but only run it after you confirm the SSH key secret is set by you.
             </p>
           </details>
         </div>

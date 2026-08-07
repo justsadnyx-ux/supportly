@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -8,12 +8,12 @@ This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.
 # v1.1.4
 
 ### Changed
-* Verification release: confirms the fully automatic update pipeline works end to end on this deployment — the bot detects the newer version from the changelog, runs `git pull`, posts the changelog + "Bot has been updated" embed to `#our-bot-updates`, and restarts itself with no manual steps.
+* Verification release: confirms the fully automatic update pipeline works end to end on this deployment -- the bot detects the newer version from the changelog, runs `git pull`, posts the changelog + "Bot has been updated" embed to `#our-bot-updates`, and restarts itself with no manual steps.
 
 # v1.1.3
 
 ### Fixed
-* Auto-update no longer hangs on local (non-Heroku) hosting. The GitHub fork-sync API call was running before `git pull` on every hosting method even though only Heroku uses it, and with no GitHub token configured it could block the check indefinitely — leaving the bot stuck on an older version with no notification and no restart. The API call is now skipped unless running on Heroku.
+* Auto-update no longer hangs on local (non-Heroku) hosting. The GitHub fork-sync API call was running before `git pull` on every hosting method even though only Heroku uses it, and with no GitHub token configured it could block the check indefinitely -- leaving the bot stuck on an older version with no notification and no restart. The API call is now skipped unless running on Heroku.
 
 # v1.1.2
 
@@ -24,13 +24,13 @@ This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 ### Changed
 * Auto-updates are now enabled by default on this deployment (`DISABLE_AUTOUPDATES=false`): the bot checks the changelog every 15 minutes and again shortly after every boot.
-* When a newer version exists, the bot automatically runs `git pull`, posts the full changelog to `#our-bot-updates`, and restarts itself — no `?update` needed.
+* When a newer version exists, the bot automatically runs `git pull`, posts the full changelog to `#our-bot-updates`, and restarts itself -- no `?update` needed.
 * Each check logs `Autoupdate check: current vX, latest vY` so the loop's activity is visible.
 
 # v1.1.0
 
 ### Performance
-* Messages are processed in a single pass: invocation contexts and the thread lookup are built once per message and reused for both moderator message-logging and command dispatch (previously the thread could be looked up 2–4 times and contexts parsed twice per message).
+* Messages are processed in a single pass: invocation contexts and the thread lookup are built once per message and reused for both moderator message-logging and command dispatch (previously the thread could be looked up 2-4 times and contexts parsed twice per message).
 * Reaction emoji (`sent_emoji`/`blocked_emoji`) are resolved once and cached, invalidating automatically when their config values change; previously they were re-resolved on every DM and every reply.
 
 ### Fixed
@@ -51,7 +51,7 @@ This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.
 
 ### Changed
 * `?update` is now a read-only update *check*: it reports the current vs. latest version and posts the full latest changelog to `#our-bot-updates`, but no longer pulls or restarts the bot.
-* GitHub Pages site (`docs/index.html`) refreshed with a hand-written design; docs still hosted on Pages (not the bot — the bot runs locally and reads its token from `.env`).
+* GitHub Pages site (`docs/index.html`) refreshed with a hand-written design; docs still hosted on Pages (not the bot -- the bot runs locally and reads its token from `.env`).
 
 ### Added
 * `#our-bot-updates` (1533409707409018992) receives the full latest changelog embed on each `?update` check.
@@ -97,7 +97,7 @@ This project mostly adheres to [Semantic Versioning](https://semver.org/spec/v2.
 # v1.0.0
 
 ### Added
-* **Supportly** — an independent Discord support bot, fully rebranded from its upstream origins.
+* **Supportly** -- an independent Discord support bot, fully rebranded from its upstream origins.
 * Premium gating: premium features require membership in the support server with the `Premium` role.
 * Support server invitation: `https://discord.gg/25YRFavwpj`.
 * Custom status: `DM - FOR SUPPORT`.
