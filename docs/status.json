@@ -1,6 +1,6 @@
 {
-  "online": false,
-  "status": "discord error: HTTP 503 - no healthy upstream",
+  "online": null,
+  "status": "unknown (enable Presence Intent on the Discord dev portal)",
   "activity": "",
-  "checked_at": "2026-08-07T22:27:44Z"
+  "checked_at": "2026-08-07T23:07:53Z"
 }
