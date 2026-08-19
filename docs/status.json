@@ -1,6 +1,6 @@
 {
-  "online": null,
-  "status": "unknown (enable Presence Intent on the Discord dev portal)",
+  "online": false,
+  "status": "discord error: Unknown Guild (code 10004)",
   "activity": "",
-  "checked_at": "2026-08-19T20:39:53Z"
+  "checked_at": "2026-08-19T21:03:26Z"
 }
